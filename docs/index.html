@@ -21,6 +21,10 @@
     font-size: 1.6rem;
     margin-bottom: 0.5rem;
   }
+  h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.3rem;
+  }
   p {
     color: #444;
   }
@@ -44,6 +48,29 @@
     color: #777;
     font-size: 0.95rem;
   }
+  .episodes {
+    margin-top: 2.5rem;
+  }
+  .episode {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .episode:last-child {
+    border-bottom: none;
+  }
+  .episode-date {
+    font-size: 0.85rem;
+    color: #999;
+    margin: 0 0 0.4rem;
+  }
+  .episode-description {
+    font-size: 0.95rem;
+    color: #444;
+    margin: 0 0 0.8rem;
+  }
+  .episode audio {
+    width: 100%;
+  }
   footer {
     margin-top: 3rem;
     font-size: 0.8rem;
@@ -57,12 +84,98 @@
 
   <a class="rss-link" href="./rss.xml">RSSフィードを購読</a>
 
-  <div class="placeholder">
-    現在準備中です。エピソードは近日公開予定です。
+  <div class="episodes" id="episodes">
+    <div class="placeholder">エピソードを読み込み中です…</div>
   </div>
 
   <footer>
     &copy; 毎日の短編小説ポッドキャスト
   </footer>
+
+  <script>
+    function formatDate(pubDateText) {
+      var d = new Date(pubDateText);
+      if (isNaN(d.getTime())) {
+        return pubDateText;
+      }
+      return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日";
+    }
+
+    function textOf(item, tagName) {
+      var el = item.getElementsByTagName(tagName)[0];
+      return el ? el.textContent.trim() : "";
+    }
+
+    function renderEpisodes(items) {
+      var container = document.getElementById("episodes");
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div class="placeholder">現在準備中です。エピソードは近日公開予定です。</div>';
+        return;
+      }
+
+      container.innerHTML = "";
+      items.forEach(function (item) {
+        var title = textOf(item, "title");
+        var description = textOf(item, "description");
+        var pubDate = textOf(item, "pubDate");
+        var enclosure = item.getElementsByTagName("enclosure")[0];
+        var audioUrl = enclosure ? enclosure.getAttribute("url") : "";
+
+        var episodeEl = document.createElement("div");
+        episodeEl.className = "episode";
+
+        var titleEl = document.createElement("h2");
+        titleEl.textContent = title;
+        episodeEl.appendChild(titleEl);
+
+        var dateEl = document.createElement("p");
+        dateEl.className = "episode-date";
+        dateEl.textContent = formatDate(pubDate);
+        episodeEl.appendChild(dateEl);
+
+        if (description) {
+          var descEl = document.createElement("p");
+          descEl.className = "episode-description";
+          descEl.textContent = description;
+          episodeEl.appendChild(descEl);
+        }
+
+        if (audioUrl) {
+          var audioEl = document.createElement("audio");
+          audioEl.setAttribute("controls", "");
+          audioEl.src = audioUrl;
+          episodeEl.appendChild(audioEl);
+        }
+
+        container.appendChild(episodeEl);
+      });
+    }
+
+    function showFallback() {
+      var container = document.getElementById("episodes");
+      container.innerHTML = '<div class="placeholder">現在準備中です。エピソードは近日公開予定です。</div>';
+    }
+
+    fetch("./rss.xml")
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Failed to fetch rss.xml");
+        }
+        return response.text();
+      })
+      .then(function (text) {
+        var parser = new DOMParser();
+        var xml = parser.parseFromString(text, "application/xml");
+        if (xml.querySelector("parsererror")) {
+          throw new Error("Failed to parse rss.xml");
+        }
+        var items = Array.prototype.slice.call(xml.getElementsByTagName("item"));
+        renderEpisodes(items);
+      })
+      .catch(function () {
+        showFallback();
+      });
+  </script>
 </body>
 </html>
