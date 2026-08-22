@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>毎日の短編小説</title>
+    <link>https://gachalktea-creator.github.io/daily-podcast/</link>
+    <description>AIが毎日生成する短編小説をお届けするポッドキャストです。</description>
+    <language>ja</language>
+    <itunes:author>毎日の短編小説</itunes:author>
+    <itunes:summary>AIが毎日生成する短編小説をお届けするポッドキャストです。</itunes:summary>
+    <itunes:image href="https://gachalktea-creator.github.io/daily-podcast/cover.jpg"/>
+    <itunes:category text="Fiction"/>
+    <itunes:explicit>false</itunes:explicit>
+  </channel>
+</rss>
