@@ -3,10 +3,10 @@
   <channel>
     <title>毎日の短編小説</title>
     <link>https://gachalktea-creator.github.io/daily-podcast/</link>
-    <description>AIが毎日生成する短編小説をお届けするポッドキャストです。</description>
+    <description>毎日短編小説を投稿します。ちょっとした隙間時間や読み聞かせなど、日常を少しでも彩ります</description>
     <language>ja</language>
     <itunes:author>毎日の短編小説</itunes:author>
-    <itunes:summary>AIが毎日生成する短編小説をお届けするポッドキャストです。</itunes:summary>
+    <itunes:summary>毎日短編小説を投稿します。ちょっとした隙間時間や読み聞かせなど、日常を少しでも彩ります</itunes:summary>
     <itunes:image href="https://gachalktea-creator.github.io/daily-podcast/cover.jpg"/>
     <itunes:owner>
       <itunes:name>毎日の短編小説</itunes:name>
