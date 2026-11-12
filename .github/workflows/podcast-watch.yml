@@ -1,0 +1,26 @@
+name: podcast-watch
+# 毎日 00:30 UTC(09:30 JST)に公開RSSの最新エピソードの日付を確認し、26時間より古ければ失敗させる(GitHubから失敗メールが届く)
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check latest episode age
+        run: |
+          set -e
+          curl -fsSL https://gachalktea-creator.github.io/daily-podcast/rss.xml -o rss.xml
+          python3 - <<'PY'
+          import re, sys, email.utils, datetime
+          x = open("rss.xml", encoding="utf-8").read()
+          m = re.search(r"<item>.*?<pubDate>(.*?)</pubDate>", x, re.S)
+          if not m:
+              print("no item found"); sys.exit(1)
+          d = email.utils.parsedate_to_datetime(m.group(1))
+          age = datetime.datetime.now(datetime.timezone.utc) - d
+          print("latest pubDate:", d, "age hours:", round(age.total_seconds()/3600, 1))
+          if age.total_seconds() > 26*3600:
+              print("STALE: no new episode for over 26 hours"); sys.exit(1)
+          PY

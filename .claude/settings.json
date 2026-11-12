@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "deny": ["Edit(.claude/**)", "Write(.claude/**)", "Edit(.github/**)", "Write(.github/**)"]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/start_voicevox.sh\"", "async": true }
+        ]
+      }
+    ]
+  }
+}
