@@ -25,11 +25,14 @@ if [ ! -x "$RUN" ]; then
 fi
 
 echo STARTING > $ST
-setsid nohup "$RUN" --host 127.0.0.1 --port 50021 </dev/null >/tmp/voicevox_run.log 2>&1 &
+# エンジンは自分のフォルダを基準に core ライブラリ/モデルを探す。cwd がリポジトリのままだと FileNotFoundError で落ちる(2026-11-14/15 の失敗原因)ので、必ずエンジンのフォルダへ移ってから起動する。
+cd "$(dirname "$RUN")" || { echo "FAILED:cd-engine" > $ST; exit 0; }
+echo "start cwd=$(pwd)"; ls | head -20
+setsid nohup ./run --host 127.0.0.1 --port 50021 </dev/null >/tmp/voicevox_run.log 2>&1 &
 for i in $(seq 1 180); do
   if curl -s -m 2 http://127.0.0.1:50021/version >/dev/null; then echo READY > $ST; echo "ready after ${i}s"; exit 0; fi
   sleep 1
 done
 echo "FAILED:no-response" > $ST
-tail -n 20 /tmp/voicevox_run.log
+tail -n 60 /tmp/voicevox_run.log
 exit 0
